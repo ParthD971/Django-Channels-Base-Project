@@ -1,0 +1,40 @@
+{% extends 'accounts/base.html' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <form method="post">
+                    {% load crispy_forms_tags %}
+                    <h2>Login</h2>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit">Submit</button>
+                    <a href="{% url 'forgot-password' %}">
+                        Forgot Password
+                    </a>
+                    <br>
+                    <a href="{% url 'resend-activation-code' %}">
+                        Already Registered? But didn't get activation code.
+                    </a>
+                    <br>
+                    <a href="{% url 'register' %}">
+                        Don't have account? Sign up.
+                    </a>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        if (window.location.hash && window.location.hash == '#_=_') {
+            window.location.hash = '';
+        }
+    </script>
+{% endblock %}

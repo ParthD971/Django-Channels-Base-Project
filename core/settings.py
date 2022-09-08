@@ -9,10 +9,12 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import logging.config
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -40,6 +42,10 @@ INSTALLED_APPS = [
 
     # PROJECT APPS
     'accounts.apps.AccountsConfig',
+
+    # THIRD PARTY APPS
+    "crispy_forms",
+    "crispy_bootstrap5",
 ]
 
 MIDDLEWARE = [
@@ -126,5 +132,114 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# accounts app
+# ACCOUNTS APP
 AUTH_USER_MODEL = 'accounts.User'
+
+# LOGGING: Disable Django's logging setup
+LOGGING_CONFIG = None
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(name)-12s %(levelname)-8s %(message)s'
+        },
+        'file': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console'
+        },
+        'root': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs/root.log',
+            'formatter': 'file',
+        },
+        'debug': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs/debug.log',
+            'formatter': 'file',
+        },
+        'info': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs/info.log',
+            'formatter': 'file',
+            'filters': ['filter_info_level'],
+        },
+        'warning': {
+            'level': 'WARN',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs/warning.log',
+            'formatter': 'file',
+        },
+        'error': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs/error.log',
+            'formatter': 'file',
+        },
+        'critical': {
+            'level': 'CRITICAL',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs/critical.log',
+            'formatter': 'file',
+        }
+    },
+    'filters': {
+        'filter_info_level': {
+            '()': 'core.logging.FilterLevels',
+            'filter_levels': [
+                "INFO"
+            ]
+        },
+        'filter_error_level': {
+            '()': 'core.logging.FilterLevels',
+            'filter_levels': [
+                "ERROR"
+            ]
+        },
+        'filter_warning_level': {
+            '()': 'core.logging.FilterLevels',
+            'filter_levels': [
+                "WARNING"
+            ]
+        }
+    },
+    'loggers': {
+        'django': {
+            'level': 'WARN',
+            'handlers': ['root'],
+            'propagate': True
+        },
+        'accounts': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'debug', 'info', 'warning', 'error', 'critical'],
+            'propagate': False,
+        }
+    },
+})
+
+
+# EMAIL SETTINGS
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
+
+# Celery settings
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+
+# TEMPLATE FORM CONFIG
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
