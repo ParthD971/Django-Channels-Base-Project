@@ -44,10 +44,12 @@ INSTALLED_APPS = [
 
     # PROJECT APPS
     'accounts.apps.AccountsConfig',
+    'chat.apps.ChatConfig',
 
     # THIRD PARTY APPS
     "crispy_forms",
     "crispy_bootstrap5",
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -253,3 +255,15 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 # TEMPLATE FORM CONFIG
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# ASGI APPLICATION
+ASGI_APPLICATION = 'core.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

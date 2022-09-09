@@ -3,3 +3,5 @@ python-dotenv==0.20.0
 celery
 redis
 crispy-bootstrap5
+channels==3.0.4
+channels_redis==3.3.1
